@@ -1,8 +1,9 @@
-import json
 import time
+import json
+with open('bases_de_datos.json', 'r') as archivo:
+            base_datos = json.load(archivo)
 #function para numero entero parametros. c = edad minima. d=edad maxima+1. mesage=el mensaje que desee
 #retorna numero entero dentro del rango c-d
-
 def num_int (c,d,mesage):                      # this funtion return int  
     while True:                                # the loop repeat until complete 
         a=(input(mesage))  
@@ -79,24 +80,16 @@ def num_note ():
 
 def carrers ():
     while True:
+        lista = ["Ingeniería de Productividad y Calidad.","Ingeniería Agropecuaria.","Ingeniería civil.",
+                 "Ingeniería en Seguridad y Salud en el Trabajo.","Ingeniería en Automatización y Control.","Ingeniería Informatica."]
         try:
             print("~" * 50)
-            a =int( input("Selecione el programa: \n\n1. Ingeniería de Productividad y Calidad.\n2. Ingeniería Agropecuaria.\n3. Ingeniería civil.\n4. Ingeniería en Seguridad y Salud en el Trabajo.\n5. Ingeniería en Automatización y Control.\n6. Ingeniería Informatica. \n"))
-            if isinstance(a,int) and a <=6 and a>=1:
-                if a == 1:
-                    return "Ingeniería de Productividad y Calidad."
-                elif a == 2:
-                    return "Ingeniería Agropecuaria."
-                elif a == 3:
-                    return "Ingeniería civil."
-                elif a == 4:
-                    return "Ingeniería en Seguridad y Salud en el Trabajo."
-                elif a == 5:
-                    return "Ingeniería en Automatización y Control."
-                elif a == 6:
-                    return "Ingeniería Informatica."
+            a =int( input( f"Selecione el programa: \n\n1. {lista[0]} \n2. {lista[1]} \n3. {lista[2]} \n4. {lista[3]} \n5. {lista[4]}  \n6. {lista[5]}  \n"))
+            if isinstance(a,int) and a <=6 and a>=1:        # isinstance es una funcion que me retorna bool 
+                                                            #si el parametro1, es del tipo que hay en el perametro dos
+                print (lista[a-1])
+                return lista[a-1]
                 
-            
             else:
                 print("~" * 50)
                 print("Recuerde que las opcion son de 1 a 6")
@@ -112,6 +105,7 @@ def carrers ():
 def menu ():
     while True:
             print('~' * 50)
+            print('~' * 50)
             print('MENU')
             print('~' * 50)
             print('Seleccione una opción')
@@ -123,6 +117,7 @@ def menu ():
             print("5. Salir")
             a = num_int(1,6,"Seleccione: ")
             return a
+            break
 #*************************************************************************************************    
 #funcion registar estudiantes sin parametros. pero usa todas las funciones del scrip funciones_snake.py
 #retorna un diccionario con los datos del ultimo estudiante agregado 
@@ -155,27 +150,85 @@ def register_stu():
 # esta funcion es el menu principal y para todas sus funciones
 def main_menu():
     import time
+    with open('bases_de_datos.json', 'r') as archivo:
+            base_datos = json.load(archivo)
+    a = len(base_datos["nombres"])
+    print("cargando datos....\n")
+    time.sleep(3)
+    print("....Base cargada\n")
+
+    print (f"Hola se acaba de cargar una base de datos con {a} Estudiantes")
+    
+    time.sleep(3)
     a=1
     while (a):
         a = menu()
         if a ==1:               #registrar estudiante
             register_stu()
         elif a==2:
-            choose = carrers()
-            print (choose)
-        elif a==3:
-            pass
-        elif a==4:
-            pass
+            find_carrer (carrers())
 
+        elif a==3:
+            media()
+        elif a==4:
+            destacados()
         else:
             print("Gracias hasta pronto")
             a=0
+#*************************************************************************************************
+#funcion para buscar los estudiantes de un acarrera
+def find_carrer (ingenieria):
+    with open('bases_de_datos.json', 'r') as archivo:
+            base_datos = json.load(archivo)
+    base_datos
+    for i in range (len(base_datos["carrera"])):
+        print('~' * 50)
+        print(ingenieria)
+        print('~' * 50)
+        
+        if ingenieria in base_datos.get("carrera"):
+
+            indices = [indice for indice,ing in enumerate(base_datos["carrera"] )   if ing == ingenieria  ] # list comprehencion
+            students_in = [base_datos["nombres"][i]   for i in indices]
+            cant_estud=len(students_in)
+            
+            print("Los estudiantes son:\n")
+            for i in range(cant_estud):
+                print(f"--{students_in[i]}")
+        else:
+            print('~' * 50)
+            print(f"{ingenieria}\n{'*' * 6}No se encontró en la lista")
+        time.sleep(2)
+        break
+#*************************************************************************************************
+#funcoin promedio general
+def media():
+    with open('bases_de_datos.json', 'r') as archivo:
+            base_datos = json.load(archivo)
+    media = sum(base_datos["promedio"])/len(base_datos["promedio"])
+    print('~' * 50)
+    print(f"La media en El Politecnico Colombiano\nJaime Isaza Cadavid es: {round(media,1)}")
+    time.sleep(2)
+#*************************************************************************************************
+def destacados():
+    with open('bases_de_datos.json', 'r') as archivo:
+            base_datos = json.load(archivo)
+    indices = [indice for indice,nota in enumerate(base_datos["promedio"] )   if nota >= 4  ]
+    notas = [nota for indice,nota in enumerate(base_datos["promedio"] )   if nota >= 4  ]
+    students_in = [base_datos["nombres"][i]   for i in indices]
+    programa = [base_datos["carrera"][i]   for i in indices]
+    cant_estud=len(students_in)
+    for i in range (cant_estud):
+         print(f"Nombre: {students_in[i]}     Nota:{notas[i]}     Programa:{programa[i]}\n")
+    time.sleep(3)
+#*************************************************************************************************
 # inicio de pruebas de las funciones
 
 
 if __name__ == '__main__':       #entry point sirve para que se ejecute las pruebas de las funciones
-                                 # solo en el scrip donde este la funcion
+    #prueba
+    main_menu()
+                               # solo en el scrip donde este la funcion
     #prueba para edad
     num_int(8,101,"Ingrese la edad del estudiante: ")
 
@@ -198,3 +251,4 @@ if __name__ == '__main__':       #entry point sirve para que se ejecute las prue
     #prueba para la funcion menu
     n = menu()
     print(n)
+
